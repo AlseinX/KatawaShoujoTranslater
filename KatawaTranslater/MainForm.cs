@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace KatawaTranslater
 {
@@ -133,7 +134,7 @@ namespace KatawaTranslater
         }
         private void InitTrans()
         {
-            string[] tt = global::KatawaTranslater.TransTable.TT.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+            string[] tt = global::KatawaTranslater.TransTable.TT.Split(new string[] { "\n" }, StringSplitOptions.None);
             TFrom = new string[tt.Length];
             TTo = new string[tt.Length];
             for (int i = 0; i < tt.Length; i++)
@@ -141,7 +142,7 @@ namespace KatawaTranslater
                 TFrom[i] = tt[i].Substring(0, tt[i].IndexOf(','));
                 TTo[i] = tt[i].Substring(tt[i].IndexOf(',') + 1);
             }
-            string[] fs = global::KatawaTranslater.TransTable.FS.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+            string[] fs = global::KatawaTranslater.TransTable.FS.Split(new string[] { "\n" }, StringSplitOptions.None);
             FFrom = new string[fs.Length];
             FTo = new string[fs.Length];
             for (int i = 0; i < fs.Length; i++)
@@ -184,121 +185,122 @@ namespace KatawaTranslater
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                throw ex;
             }
         }
         private bool OpenText(string path)
         {
-            try
+            using (StreamReader sr = new StreamReader(File.OpenRead(path), Encoding.UTF8))
             {
-                using (StreamReader sr = new StreamReader(File.OpenRead(path), Encoding.Default))
+                dgvContent.Rows.Clear();
+                FileContent = new List<string>();
+                tableContent = new List<string>();
+                bool t = false;
+                while (!sr.EndOfStream)
                 {
-                    dgvContent.Rows.Clear();
-                    FileContent = new List<string>();
-                    tableContent = new List<string>();
-                    bool t = false;
-                    while (!sr.EndOfStream)
+                    string s = sr.ReadLine();
+                    if (s.IndexOf('\"') >= 0)
                     {
-                        string s = sr.ReadLine();
-                        if (s.IndexOf('\"') >= 0)
-                        {
-                            if (s.StartsWith("#"))
-                            {
-                                if (t)
-                                {
-                                    AddContent("");
-                                }
-                                t = true;
-                                AddContent(s);
-                            }
-                            else if (!t)
-                            {
-                                s = "#" + s;
-                                t = true;
-                                AddContent(s);
-                            }
-                            else
-                            {
-                                AddContent(s);
-                                t = false;
-                            }
-                        }
-                        else
+                        if (s.StartsWith("#"))
                         {
                             if (t)
                             {
-                                AddContent("");
-                                t = false;
+                                AddContent();
                             }
+                            t = true;
+                            AddContent(s);
                         }
-                        FileContent.Add(s);
+                        else if (!t)
+                        {
+                            s = "#" + s;
+                            t = true;
+                            AddContent(s);
+                        }
+                        else
+                        {
+                            AddContent(s);
+                            t = false;
+                        }
                     }
+                    else
+                    {
+                        if (t)
+                        {
+                            AddContent();
+                            t = false;
+                        }
+                    }
+                    FileContent.Add(s);
                 }
-                TableContent = tableContent.ToArray();
-                dgvContent.Focus();
-                Openning = true;
-                if (Settings.AutoOpen != "Disabled")
-                {
-                    Settings.AutoOpen = OFD.FileName;
-                }
-                return true;
             }
-            catch
+            TableContent = tableContent.ToArray();
+            dgvContent.Focus();
+            Openning = true;
+            if (Settings.AutoOpen != "Disabled")
             {
-                return false;
+                Settings.AutoOpen = OFD.FileName;
             }
+            return true;
         }
         private string InnerReplace(string s, string content)
         {
             return s.Substring(1, s.IndexOf('\"')) + content + s.Substring(s.LastIndexOf('\"'));
         }
-        private void AddContent(string text)
+        private void AddContent()
         {
-            bool type = text.StartsWith("#");
-            string fs = "";
-            if (type)
+            AddContent("", true);
+        }
+        private void AddContent(string text, bool isNew = false)
+        {
+            bool isComment = text.StartsWith("#");
+            string prefix = "";
+            if (isComment)
             {
-                fs = ForeString(text, '\"');
+                prefix = ForeString(text, '\"');
             }
-            bool _new = text == "";
-            if (_new)
+            if (isNew)
             {
                 text = Translate(dgvContent.Rows[dgvContent.Rows.Count - 1].Cells[0].Value.ToString());
             }
             else
             {
-                text = text.Substring(text.IndexOf('\"') + 1);
-                text = text.Substring(0, text.LastIndexOf('\"'));
+                if (text.Count(x => x == '\"') >= 2)
+                {
+                    text = text.Substring(text.IndexOf('\"') + 1);
+                    text = text.Substring(0, text.LastIndexOf('\"'));
+                }
             }
-            if (type)
+            if (isComment)
             {
-                text = fs + ":" + text;
+                text = prefix + ":" + text;
             }
             DataGridViewRow n = new DataGridViewRow();
             n.Tag = FileContent.Count;
             n.Cells.Add(new DataGridViewTextBoxCell());
             n.Cells[0].Value = text;
-            n.Cells[0].ReadOnly = type;
+            n.Cells[0].ReadOnly = isComment;
             n.Cells[0].Style.Alignment = DataGridViewContentAlignment.TopLeft;
-            n.Cells[0].Style.ForeColor = type ? SC : TC;
-            n.Cells[0].Style.BackColor = type ? Color.FromArgb(200, 210, 255) : Color.FromArgb(210, 220, 255);
+            n.Cells[0].Style.ForeColor = isComment ? SC : TC;
+            n.Cells[0].Style.BackColor = isComment ? Color.FromArgb(200, 210, 255) : Color.FromArgb(210, 220, 255);
             n.Cells[0].Style.Font = TFont;
             n.HeaderCell.Style.ForeColor = n.Cells[0].Style.ForeColor;
             n.HeaderCell.Style.BackColor = n.Cells[0].Style.BackColor;
-            n.HeaderCell.Value = (type ? "原" : "译") + (tableContent.Count / 2 + 1);
+            n.HeaderCell.Value = (isComment ? "原" : "译") + (tableContent.Count / 2 + 1);
             n.HeaderCell.Style.Font = TFont;
             n.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            if (_new)
+            if (isNew)
             {
                 FileContent.Add(Translate(FileContent[FileContent.Count - 1].Substring(1)));
             }
             tableContent.Add(text);
             dgvContent.Rows.Add(n);
         }
+
         private bool SaveText(string path)
         {
             try
             {
-                using (StreamWriter sr = new StreamWriter(File.Open(path, FileMode.Create), Encoding.Default))
+                using (StreamWriter sr = new StreamWriter(File.Open(path, FileMode.Create), Encoding.UTF8))
                 {
                     foreach (string s in FileContent)
                     {
@@ -313,6 +315,7 @@ namespace KatawaTranslater
                 return false;
             }
         }
+
         private void MasTrans()
         {
             string[] s = new string[dgvContent.Rows.Count / 2];
@@ -473,11 +476,17 @@ namespace KatawaTranslater
         {
             if (TableContent != null)
             {
-                e.Value = TableContent[e.RowIndex];
+                if (e.RowIndex < TableContent.Length)
+                    e.Value = TableContent[e.RowIndex];
+                else
+                    e.Value = "Value out of bounds: " + e.RowIndex;
             }
             else
             {
-                e.Value = tableContent[e.RowIndex];
+                if (e.RowIndex < tableContent.Count)
+                    e.Value = tableContent[e.RowIndex];
+                else
+                    e.Value = "Value out of bounds: " + e.RowIndex;
             }
         }
         private void dgvContent_Paint(object sender, PaintEventArgs e)
