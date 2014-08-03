@@ -96,6 +96,7 @@
     <Compile Include="About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
+    <Compile Include="EncodingType.cs" />
     <Compile Include="GoogleTranslate.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -188,7 +188,7 @@ namespace KatawaTranslater
         {
             try
             {
-                using (StreamReader sr = new StreamReader(File.OpenRead(path), Encoding.UTF8))
+                using (StreamReader sr = new StreamReader(File.OpenRead(path), EncodingType.GetType(path)))
                 {
                     dgvContent.Rows.Clear();
                     FileContent = new List<string>();
