@@ -33,13 +33,12 @@ namespace KatawaTranslater
         /// </summary>
         private void InitializeComponent()
         {
-            Size = Screen.GetWorkingArea(this).Size;
-            Location = Screen.GetWorkingArea(this).Location;
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.pnlContent = new System.Windows.Forms.Panel();
-            this.dgvContent = new MyGrid();
+            this.SPC = new System.Windows.Forms.SplitContainer();
+            this.dgvContent = new KatawaTranslater.MainForm.MyGrid();
             this.clmContent = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cmsCell = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.rbtnReset = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,6 +46,9 @@ namespace KatawaTranslater
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
             this.rbtnTransThis = new System.Windows.Forms.ToolStripMenuItem();
             this.rbtnTransFollow = new System.Windows.Forms.ToolStripMenuItem();
+            this.splTrans = new System.Windows.Forms.Splitter();
+            this.txtOutput = new System.Windows.Forms.RichTextBox();
+            this.txtInput = new System.Windows.Forms.TextBox();
             this.MENU = new System.Windows.Forms.MenuStrip();
             this.btnFile = new System.Windows.Forms.ToolStripMenuItem();
             this.btnOpen = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,6 +56,10 @@ namespace KatawaTranslater
             this.btnSaveAs = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.btnExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnTranslate = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnTransAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnDescribe = new System.Windows.Forms.ToolStripMenuItem();
             this.btnOption = new System.Windows.Forms.ToolStripMenuItem();
             this.btnFont = new System.Windows.Forms.ToolStripMenuItem();
             this.btnSC = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,10 +67,6 @@ namespace KatawaTranslater
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.btnAutoOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.btnAutoSave = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnTranslate = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnTransAll = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnDescribe = new System.Windows.Forms.ToolStripMenuItem();
             this.btnHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.btnAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
@@ -78,9 +80,10 @@ namespace KatawaTranslater
             this.FD = new System.Windows.Forms.FontDialog();
             this.CD = new System.Windows.Forms.ColorDialog();
             this.bwAutoSave = new System.ComponentModel.BackgroundWorker();
-            this.gt = new KatawaTranslater.GoogleTranslate();
-            this.gt.TopLevel = false;
             this.pnlContent.SuspendLayout();
+            this.SPC.Panel1.SuspendLayout();
+            this.SPC.Panel2.SuspendLayout();
+            this.SPC.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvContent)).BeginInit();
             this.cmsCell.SuspendLayout();
             this.MENU.SuspendLayout();
@@ -89,15 +92,39 @@ namespace KatawaTranslater
             // 
             // pnlContent
             // 
-            this.pnlContent.Controls.Add(this.gt);
-            this.pnlContent.Controls.Add(this.dgvContent);
+            this.pnlContent.Controls.Add(this.SPC);
             this.pnlContent.Controls.Add(this.MENU);
             this.pnlContent.Controls.Add(this.STS);
             this.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlContent.Location = new System.Drawing.Point(0, 0);
             this.pnlContent.Name = "pnlContent";
-            this.pnlContent.Size = new System.Drawing.Size(784, 561);
+            this.pnlContent.Size = new System.Drawing.Size(944, 561);
             this.pnlContent.TabIndex = 3;
+            // 
+            // SPC
+            // 
+            this.SPC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(180)))), ((int)(((byte)(255)))));
+            this.SPC.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SPC.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.SPC.ImeMode = System.Windows.Forms.ImeMode.On;
+            this.SPC.Location = new System.Drawing.Point(0, 25);
+            this.SPC.Name = "SPC";
+            // 
+            // SPC.Panel1
+            // 
+            this.SPC.Panel1.Controls.Add(this.dgvContent);
+            // 
+            // SPC.Panel2
+            // 
+            this.SPC.Panel2.Controls.Add(this.splTrans);
+            this.SPC.Panel2.Controls.Add(this.txtOutput);
+            this.SPC.Panel2.Controls.Add(this.txtInput);
+            this.SPC.Panel2.Padding = new System.Windows.Forms.Padding(0, 4, 4, 4);
+            this.SPC.Panel2Collapsed = true;
+            this.SPC.Size = new System.Drawing.Size(944, 510);
+            this.SPC.SplitterDistance = 747;
+            this.SPC.TabIndex = 3;
+            this.SPC.DoubleClick += new System.EventHandler(this.SPC_DoubleClick);
             // 
             // dgvContent
             // 
@@ -105,19 +132,14 @@ namespace KatawaTranslater
             this.dgvContent.AllowUserToDeleteRows = false;
             this.dgvContent.AllowUserToResizeColumns = false;
             this.dgvContent.AllowUserToResizeRows = false;
-            this.dgvContent.VirtualMode = true;
-            this.dgvContent.RowHeadersDefaultCellStyle.Padding = new Padding(0);
             this.dgvContent.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dgvContent.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.dgvContent.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dgvContent.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvContent.ColumnHeadersVisible = false;
             this.dgvContent.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.clmContent});
-            this.dgvContent.EnableHeadersVisualStyles = false;
             this.dgvContent.ContextMenuStrip = this.cmsCell;
-            this.dgvContent.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
-            this.dgvContent.ColumnHeadersVisible = false;
-            this.dgvContent.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -127,22 +149,26 @@ namespace KatawaTranslater
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dgvContent.DefaultCellStyle = dataGridViewCellStyle1;
             this.dgvContent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvContent.EnableHeadersVisualStyles = false;
             this.dgvContent.GridColor = System.Drawing.Color.White;
-            this.dgvContent.Location = new System.Drawing.Point(0, 25);
+            this.dgvContent.Location = new System.Drawing.Point(0, 0);
             this.dgvContent.MultiSelect = false;
             this.dgvContent.Name = "dgvContent";
+            this.dgvContent.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dgvContent.RowHeadersWidth = 80;
+            this.dgvContent.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dgvContent.RowTemplate.Height = 23;
-            this.dgvContent.Size = new System.Drawing.Size(784, 510);
+            this.dgvContent.Size = new System.Drawing.Size(944, 510);
             this.dgvContent.TabIndex = 0;
-            this.dgvContent.GotFocus += dgvContent_GotFocus;
+            this.dgvContent.VirtualMode = true;
+            this.dgvContent.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvContent_CellBeginEdit);
+            this.dgvContent.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvContent_CellEndEdit);
             this.dgvContent.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvContent_CellMouseDown);
+            this.dgvContent.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dgvContent_CellValidating);
+            this.dgvContent.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.dgvContent_CellValueNeeded);
             this.dgvContent.SelectionChanged += new System.EventHandler(this.dgvContent_SelectionChanged);
-            this.dgvContent.CellBeginEdit += dgvContent_CellBeginEdit;
-            this.dgvContent.CellValueNeeded += dgvContent_CellValueNeeded;
-            this.dgvContent.CellValidating += dgvContent_CellValidating;
-            this.dgvContent.Paint += dgvContent_Paint;
-            this.dgvContent.CellEndEdit += dgvContent_CellEndEdit;
+            this.dgvContent.Paint += new System.Windows.Forms.PaintEventHandler(this.dgvContent_Paint);
+            this.dgvContent.GotFocus += new System.EventHandler(this.dgvContent_GotFocus);
             // 
             // clmContent
             // 
@@ -195,6 +221,37 @@ namespace KatawaTranslater
             this.rbtnTransFollow.Text = "预翻译以下(&F)";
             this.rbtnTransFollow.Click += new System.EventHandler(this.rbtnTransFollow_Click);
             // 
+            // splTrans
+            // 
+            this.splTrans.Dock = System.Windows.Forms.DockStyle.Top;
+            this.splTrans.Enabled = false;
+            this.splTrans.Location = new System.Drawing.Point(0, 25);
+            this.splTrans.Name = "splTrans";
+            this.splTrans.Size = new System.Drawing.Size(189, 4);
+            this.splTrans.TabIndex = 2;
+            this.splTrans.TabStop = false;
+            // 
+            // txtOutput
+            // 
+            this.txtOutput.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(250)))), ((int)(((byte)(255)))));
+            this.txtOutput.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtOutput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtOutput.Location = new System.Drawing.Point(0, 25);
+            this.txtOutput.Name = "txtOutput";
+            this.txtOutput.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
+            this.txtOutput.Size = new System.Drawing.Size(189, 601);
+            this.txtOutput.TabIndex = 1;
+            this.txtOutput.Text = "";
+            // 
+            // txtInput
+            // 
+            this.txtInput.Dock = System.Windows.Forms.DockStyle.Top;
+            this.txtInput.Location = new System.Drawing.Point(0, 4);
+            this.txtInput.Name = "txtInput";
+            this.txtInput.Size = new System.Drawing.Size(189, 21);
+            this.txtInput.TabIndex = 0;
+            this.txtInput.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtInput_KeyPress);
+            // 
             // MENU
             // 
             this.MENU.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -205,11 +262,11 @@ namespace KatawaTranslater
             this.MENU.Location = new System.Drawing.Point(0, 0);
             this.MENU.Name = "MENU";
             this.MENU.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.MENU.Size = new System.Drawing.Size(784, 25);
+            this.MENU.Size = new System.Drawing.Size(944, 25);
             this.MENU.TabIndex = 1;
             this.MENU.Text = "menuStrip1";
             // 
-            // 文件FToolStripMenuItem
+            // btnFile
             // 
             this.btnFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnOpen,
@@ -217,7 +274,7 @@ namespace KatawaTranslater
             this.btnSaveAs,
             this.toolStripMenuItem1,
             this.btnExit});
-            this.btnFile.Name = "文件FToolStripMenuItem";
+            this.btnFile.Name = "btnFile";
             this.btnFile.Size = new System.Drawing.Size(58, 21);
             this.btnFile.Text = "文件(&F)";
             // 
@@ -257,6 +314,36 @@ namespace KatawaTranslater
             this.btnExit.Text = "关闭(&X)";
             this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
             // 
+            // btnTranslate
+            // 
+            this.btnTranslate.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnTransAll,
+            this.toolStripMenuItem5,
+            this.btnDescribe});
+            this.btnTranslate.Name = "btnTranslate";
+            this.btnTranslate.Size = new System.Drawing.Size(59, 21);
+            this.btnTranslate.Text = "翻译(&T)";
+            // 
+            // btnTransAll
+            // 
+            this.btnTransAll.Name = "btnTransAll";
+            this.btnTransAll.Size = new System.Drawing.Size(187, 22);
+            this.btnTransAll.Text = "预翻译所有(&T)";
+            this.btnTransAll.Click += new System.EventHandler(this.btnTransAll_Click);
+            // 
+            // toolStripMenuItem5
+            // 
+            this.toolStripMenuItem5.Name = "toolStripMenuItem5";
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(184, 6);
+            // 
+            // btnDescribe
+            // 
+            this.btnDescribe.Name = "btnDescribe";
+            this.btnDescribe.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
+            this.btnDescribe.Size = new System.Drawing.Size(187, 22);
+            this.btnDescribe.Text = "词典查询(&D)";
+            this.btnDescribe.Click += new System.EventHandler(this.btnDescribe_Click);
+            // 
             // btnOption
             // 
             this.btnOption.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -273,28 +360,28 @@ namespace KatawaTranslater
             // btnFont
             // 
             this.btnFont.Name = "btnFont";
-            this.btnFont.Size = new System.Drawing.Size(142, 22);
+            this.btnFont.Size = new System.Drawing.Size(152, 22);
             this.btnFont.Text = "字体(&F)";
             this.btnFont.Click += new System.EventHandler(this.btnFont_Click);
             // 
             // btnSC
             // 
             this.btnSC.Name = "btnSC";
-            this.btnSC.Size = new System.Drawing.Size(142, 22);
+            this.btnSC.Size = new System.Drawing.Size(152, 22);
             this.btnSC.Text = "原文染色(&S)";
             this.btnSC.Click += new System.EventHandler(this.btnSC_Click);
             // 
             // btnTC
             // 
             this.btnTC.Name = "btnTC";
-            this.btnTC.Size = new System.Drawing.Size(142, 22);
+            this.btnTC.Size = new System.Drawing.Size(152, 22);
             this.btnTC.Text = "译文染色(&T)";
             this.btnTC.Click += new System.EventHandler(this.btnTC_Click);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(139, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(149, 6);
             // 
             // btnAutoOpen
             // 
@@ -302,7 +389,7 @@ namespace KatawaTranslater
             this.btnAutoOpen.CheckOnClick = true;
             this.btnAutoOpen.CheckState = System.Windows.Forms.CheckState.Checked;
             this.btnAutoOpen.Name = "btnAutoOpen";
-            this.btnAutoOpen.Size = new System.Drawing.Size(142, 22);
+            this.btnAutoOpen.Size = new System.Drawing.Size(152, 22);
             this.btnAutoOpen.Text = "自动打开(&O)";
             this.btnAutoOpen.Click += new System.EventHandler(this.btnAutoOpen_Click);
             // 
@@ -312,47 +399,17 @@ namespace KatawaTranslater
             this.btnAutoSave.CheckOnClick = true;
             this.btnAutoSave.CheckState = System.Windows.Forms.CheckState.Checked;
             this.btnAutoSave.Name = "btnAutoSave";
-            this.btnAutoSave.Size = new System.Drawing.Size(142, 22);
+            this.btnAutoSave.Size = new System.Drawing.Size(152, 22);
             this.btnAutoSave.Text = "自动保存(&A)";
             this.btnAutoSave.Click += new System.EventHandler(this.btnAutoSave_Click);
             // 
-            // btnTranslate
-            // 
-            this.btnTranslate.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnTransAll,
-            this.toolStripMenuItem5,
-            this.btnDescribe});
-            this.btnTranslate.Name = "btnTranslate";
-            this.btnTranslate.Size = new System.Drawing.Size(59, 21);
-            this.btnTranslate.Text = "翻译(&T)";
-            // 
-            // btnTransAll
-            // 
-            this.btnTransAll.Name = "btnTransAll";
-            this.btnTransAll.Size = new System.Drawing.Size(151, 22);
-            this.btnTransAll.Text = "预翻译所有(&T)";
-            this.btnTransAll.Click += new System.EventHandler(this.btnTransAll_Click);
-            // 
-            // toolStripMenuItem5
-            // 
-            this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-            this.toolStripMenuItem5.Size = new System.Drawing.Size(148, 6);
-            // 
-            // btnDescribe
-            // 
-            this.btnDescribe.Name = "btnDescribe";
-            this.btnDescribe.Size = new System.Drawing.Size(151, 22);
-            this.btnDescribe.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
-            this.btnDescribe.Text = "词典查询(&D)";
-            this.btnDescribe.Click += new System.EventHandler(this.btnDescribe_Click);
-            // 
-            // 帮助HToolStripMenuItem
+            // btnHelp
             // 
             this.btnHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnAbout,
             this.toolStripMenuItem3,
             this.btnReset});
-            this.btnHelp.Name = "帮助HToolStripMenuItem";
+            this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(61, 21);
             this.btnHelp.Text = "帮助(&H)";
             // 
@@ -383,7 +440,7 @@ namespace KatawaTranslater
             this.lblTime});
             this.STS.Location = new System.Drawing.Point(0, 535);
             this.STS.Name = "STS";
-            this.STS.Size = new System.Drawing.Size(784, 26);
+            this.STS.Size = new System.Drawing.Size(944, 26);
             this.STS.TabIndex = 2;
             // 
             // lblAutoSave
@@ -398,7 +455,7 @@ namespace KatawaTranslater
             this.lblAbout.Image = global::KatawaTranslater.Properties.Resources.Art2;
             this.lblAbout.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.lblAbout.Name = "lblAbout";
-            this.lblAbout.Size = new System.Drawing.Size(621, 21);
+            this.lblAbout.Size = new System.Drawing.Size(781, 21);
             this.lblAbout.Spring = true;
             this.lblAbout.Text = "Etsnarl制作";
             this.lblAbout.DoubleClick += new System.EventHandler(this.lblAbout_DoubleClick);
@@ -427,31 +484,26 @@ namespace KatawaTranslater
             // 
             this.bwAutoSave.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwAutoSave_DoWork);
             // 
-            // gt
-            // 
-            this.gt.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-            this.gt.Name = "gt";
-            this.gt.ShowInTaskbar = false;
-            this.gt.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.gt.Text = "释义查询";
-            this.gt.Visible = false;
-            this.gt.FormClosing += gt_FormClosing;
-            // 
             // MainForm
             // 
-            this.DoubleBuffered = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 561);
+            this.ClientSize = new System.Drawing.Size(944, 561);
             this.Controls.Add(this.pnlContent);
+            this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.MENU;
             this.Name = "MainForm";
             this.Text = "かたわ少女中国語翻訳ツール";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.pnlContent.ResumeLayout(false);
             this.pnlContent.PerformLayout();
+            this.SPC.Panel1.ResumeLayout(false);
+            this.SPC.Panel2.ResumeLayout(false);
+            this.SPC.Panel2.PerformLayout();
+            this.SPC.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvContent)).EndInit();
             this.cmsCell.ResumeLayout(false);
             this.MENU.ResumeLayout(false);
@@ -459,8 +511,7 @@ namespace KatawaTranslater
             this.STS.ResumeLayout(false);
             this.STS.PerformLayout();
             this.ResumeLayout(false);
-            Size = Screen.GetWorkingArea(this).Size;
-            Location = Screen.GetWorkingArea(this).Location;
+
         }
 
 
@@ -506,6 +557,10 @@ namespace KatawaTranslater
         private System.Windows.Forms.ToolStripMenuItem btnDescribe;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
         private System.Windows.Forms.Panel pnlContent;
+        private SplitContainer SPC;
+        private RichTextBox txtOutput;
+        private TextBox txtInput;
+        private Splitter splTrans;
 
 
 

@@ -15,11 +15,11 @@ namespace KatawaTranslater
         private List<string> FileContent, tableContent;
         string[] TableContent;
         private string[] TFrom, TTo, FFrom, FTo;
+        private bool described = false;
         private int redraw = -1;
         private int AutoSaveSecond = 0;
-        private Settings Settings;
-        private GoogleTranslate gt;
         private int RightClickIndex;
+        private Settings Settings;
         #endregion
         #region 私有属性
         private bool Openning
@@ -504,7 +504,7 @@ namespace KatawaTranslater
                 catch { }
                 redraw = -1;
             }
-            if ((!gt.Visible) && (!dgvContent.IsCurrentCellInEditMode))
+            if (SPC.Panel2Collapsed && !dgvContent.IsCurrentCellInEditMode)
             {
                 try
                 {
@@ -588,16 +588,17 @@ namespace KatawaTranslater
         }
         private void btnDescribe_Click(object sender, EventArgs e)
         {
-            gt.Show();
-            gt.Activate();
-            gt.txtInput.Text = "";
-            gt.txtInput.Focus();
-        }
-        private void gt_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            e.Cancel = true;
-            gt.JustShown = false;
-            gt.Hide();
+            SPC.Panel2Collapsed = txtInput.Focused;
+            if (!SPC.Panel2Collapsed)
+            {
+                txtInput.Text = "";
+                txtInput.Focus();
+                described = false;
+            }
+            else
+            {
+                dgvContent.Focus();
+            }
         }
         private void dgvContent_GotFocus(object sender, System.EventArgs e)
         {
@@ -612,6 +613,43 @@ namespace KatawaTranslater
         {
             dgvContent.CurrentCell.Style.BackColor = dgvContent.CurrentRow.HeaderCell.Value.ToString().StartsWith("原") ? Color.FromArgb(200, 210, 255) : Color.FromArgb(210, 220, 255);
             DataUpdate(e.RowIndex, dgvContent.Rows[e.RowIndex].Cells[0].Value.ToString());
+        }
+        private void txtInput_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == 13)
+            {
+                if (described)
+                {
+                    btnDescribe_Click(null, null);
+                    return;
+                }
+                txtOutput.Text = new Translater().Describe(txtInput.Text);
+                List<string> l = new List<string>();
+                foreach (string s in txtOutput.Lines)
+                {
+                    if (s != "")
+                    {
+                        l.Add(s);
+                    }
+                }
+                txtOutput.Lines = l.ToArray();
+                try
+                {
+                    txtOutput.Select(txtOutput.Text.Length - 1, 0);
+                }
+                catch { }
+                txtOutput.ScrollToCaret();
+                Activate();
+                described = true;
+            }
+            else
+            {
+                described = false;
+            }
+        }
+        private void SPC_DoubleClick(object sender, EventArgs e)
+        {
+            SPC.Panel2Collapsed = true;
         }
         #endregion
         #region 内部类定义
@@ -665,6 +703,10 @@ namespace KatawaTranslater
                 {
                     mf.DataUpdate(CurrentCell.RowIndex, CurrentCell.EditedFormattedValue.ToString());
                     mf.btnSave_Click(null, null);
+                }
+                else if (keyData == (Keys.D | Keys.Control))
+                {
+                    mf.btnDescribe_Click(null, null);
                 }
                 else if (keyData == ((Keys)220))
                 {

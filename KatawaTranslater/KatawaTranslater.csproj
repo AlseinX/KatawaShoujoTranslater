@@ -97,12 +97,6 @@
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
     <Compile Include="EncodingType.cs" />
-    <Compile Include="GoogleTranslate.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GoogleTranslate.Designer.cs">
-      <DependentUpon>GoogleTranslate.cs</DependentUpon>
-    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -128,9 +122,6 @@
     </Compile>
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GoogleTranslate.resx">
-      <DependentUpon>GoogleTranslate.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
