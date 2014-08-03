@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace KatawaTranslater
 {
@@ -259,8 +260,11 @@ namespace KatawaTranslater
             }
             else
             {
-                text = text.Substring(text.IndexOf('\"') + 1);
-                text = text.Substring(0, text.LastIndexOf('\"'));
+                if (text.Count(x => x == '\"') >= 2)
+                {
+                    text = text.Substring(text.IndexOf('\"') + 1);
+                    text = text.Substring(0, text.LastIndexOf('\"'));
+                }
             }
             if (type)
             {
