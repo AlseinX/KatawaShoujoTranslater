@@ -649,7 +649,8 @@ namespace KatawaTranslater
         }
         private void SPC_DoubleClick(object sender, EventArgs e)
         {
-            SPC.Panel2Collapsed = true;
+            txtInput.Focus();
+            btnDescribe_Click(null, null);
         }
         #endregion
         #region 内部类定义
