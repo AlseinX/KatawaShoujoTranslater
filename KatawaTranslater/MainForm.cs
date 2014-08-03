@@ -256,7 +256,7 @@ namespace KatawaTranslater
             bool _new = text == "";
             if (_new)
             {
-                text = Translate(dgvContent.Rows[dgvContent.Rows.Count - 1].Cells[0].Value.ToString());
+                text = Translate(DeFore(tableContent[tableContent.Count - 1]));
             }
             else
             {
