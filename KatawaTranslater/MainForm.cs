@@ -31,6 +31,7 @@ namespace KatawaTranslater
             set
             {
                 dgvContent.Enabled = value;
+                btnCopyAll.Enabled = value;
                 Changed = false;
             }
         }
@@ -436,32 +437,6 @@ namespace KatawaTranslater
         {
             btnAbout_Click(sender, e);
         }
-        private void dgvContent_SelectionChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                bool b = ((string)dgvContent.CurrentRow.HeaderCell.Value).StartsWith("原");
-                if (b)
-                {
-                    dgvContent.CurrentCell = dgvContent.Rows[dgvContent.CurrentRow.Index + 1].Cells[0];
-
-                }
-                if (!dgvContent.clicked)
-                {
-                    dgvContent.FirstDisplayedCell = dgvContent.Rows[dgvContent.CurrentRow.Index - 2].Cells[0];
-                }
-                if (!b)
-                {
-                    dgvContent.clicked = false;
-                }
-            }
-            catch { }
-            try
-            {
-                dgvContent.BeginEdit(false);
-            }
-            catch { }
-        }
         private void dgvContent_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
             DataUpdate(e.RowIndex, e.FormattedValue.ToString());
@@ -504,7 +479,7 @@ namespace KatawaTranslater
                 catch { }
                 redraw = -1;
             }
-            if (SPC.Panel2Collapsed && !dgvContent.IsCurrentCellInEditMode)
+            if (!txtInput.Focused && !dgvContent.IsCurrentCellInEditMode)
             {
                 try
                 {
@@ -586,6 +561,10 @@ namespace KatawaTranslater
             MasTrans();
             Changed = true;
         }
+        private void rbtnCopy_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(DeFore(TableContent[RightClickIndex - 1]));
+        }
         private void btnDescribe_Click(object sender, EventArgs e)
         {
             SPC.Panel2Collapsed = txtInput.Focused;
@@ -598,6 +577,7 @@ namespace KatawaTranslater
             else
             {
                 dgvContent.Focus();
+                SendKeys.Send("+ ");
             }
         }
         private void dgvContent_GotFocus(object sender, System.EventArgs e)
@@ -611,8 +591,8 @@ namespace KatawaTranslater
         }
         private void dgvContent_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            dgvContent.CurrentCell.Style.BackColor = dgvContent.CurrentRow.HeaderCell.Value.ToString().StartsWith("原") ? Color.FromArgb(200, 210, 255) : Color.FromArgb(210, 220, 255);
-            DataUpdate(e.RowIndex, dgvContent.Rows[e.RowIndex].Cells[0].Value.ToString());
+            dgvContent.CurrentCell.Style.BackColor = Color.FromArgb(210, 220, 255);
+            DataUpdate(e.RowIndex, dgvContent.Rows[e.RowIndex].Cells[0].EditedFormattedValue.ToString());
         }
         private void txtInput_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -651,6 +631,17 @@ namespace KatawaTranslater
         {
             txtInput.Focus();
             btnDescribe_Click(null, null);
+        }
+        private void btnCopyAll_Click(object sender, EventArgs e)
+        {
+            string s = "";
+            for (int i = 0; i < TableContent.Length; i++)
+            {
+                s += TableContent[i] + "\r\n";
+                i++;
+                s += "译文:" + TableContent[i] + "\r\n";
+            }
+            Clipboard.SetText(s);
         }
         #endregion
         #region 内部类定义
@@ -709,15 +700,27 @@ namespace KatawaTranslater
                 {
                     mf.btnDescribe_Click(null, null);
                 }
-                else if (keyData == ((Keys)220))
+                else if (keyData == Keys.Enter)
+                {
+                    int index = FirstDisplayedCell.RowIndex;
+                    bool type = CurrentRow.HeaderCell.Value.ToString().StartsWith("原");
+                    try
+                    {
+                        CurrentCell = Rows[CurrentCell.RowIndex + (type ? 1 : 2)].Cells[0];
+                        FirstDisplayedCell = Rows[index + (type ? 1 : 2)].Cells[0];
+                    }
+                    catch { }
+                }
+                else if (keyData == (Keys)220 || keyData == (Keys.Shift | (Keys)220))
                 {
                     if (!ln)
                     {
+                        int index = FirstDisplayedCell.RowIndex;
+                        bool type = CurrentRow.HeaderCell.Value.ToString().StartsWith("原");
                         try
                         {
-                            CurrentCell = Rows[CurrentRow.Index - 2].Cells[0];
-                            Application.DoEvents();
-                            BeginEdit(false);
+                            CurrentCell = Rows[CurrentCell.RowIndex - (type ? 1 : 2)].Cells[0];
+                            FirstDisplayedCell = Rows[index - (type ? 1 : 2)].Cells[0];
                         }
                         catch { }
                     }
@@ -735,5 +738,7 @@ namespace KatawaTranslater
             }
         }
         #endregion
+
+
     }
 }

@@ -62,7 +62,7 @@
             this.lblChinese.Name = "lblChinese";
             this.lblChinese.Size = new System.Drawing.Size(299, 25);
             this.lblChinese.TabIndex = 1;
-            this.lblChinese.Text = "片轮少女汉化专用翻译工具 v1.4.0";
+            this.lblChinese.Text = "片轮少女汉化专用翻译工具 v1.5.0";
             // 
             // lblEnglish
             // 
@@ -73,7 +73,7 @@
             this.lblEnglish.Name = "lblEnglish";
             this.lblEnglish.Size = new System.Drawing.Size(448, 25);
             this.lblEnglish.TabIndex = 2;
-            this.lblEnglish.Text = "Katawa Shoujo Chinese Localization Tool v1.4.0";
+            this.lblEnglish.Text = "Katawa Shoujo Chinese Localization Tool v1.5.0";
             // 
             // flpContent
             // 
@@ -96,7 +96,7 @@
             this.lblJapanese.Name = "lblJapanese";
             this.lblJapanese.Size = new System.Drawing.Size(318, 25);
             this.lblJapanese.TabIndex = 3;
-            this.lblJapanese.Text = "かたわ少女中国語翻訳ツール v1.4.0";
+            this.lblJapanese.Text = "かたわ少女中国語翻訳ツール v1.5.0";
             // 
             // pbIcon
             // 

@@ -56,7 +56,7 @@ namespace KatawaTranslater
             this.btnSaveAs = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.btnExit = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnTranslate = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnTools = new System.Windows.Forms.ToolStripMenuItem();
             this.btnTransAll = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             this.btnDescribe = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,6 +80,9 @@ namespace KatawaTranslater
             this.FD = new System.Windows.Forms.FontDialog();
             this.CD = new System.Windows.Forms.ColorDialog();
             this.bwAutoSave = new System.ComponentModel.BackgroundWorker();
+            this.rbtnCopy = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnCopyAll = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlContent.SuspendLayout();
             this.SPC.Panel1.SuspendLayout();
             this.SPC.Panel2.SuspendLayout();
@@ -166,7 +169,6 @@ namespace KatawaTranslater
             this.dgvContent.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvContent_CellMouseDown);
             this.dgvContent.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dgvContent_CellValidating);
             this.dgvContent.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.dgvContent_CellValueNeeded);
-            this.dgvContent.SelectionChanged += new System.EventHandler(this.dgvContent_SelectionChanged);
             this.dgvContent.Paint += new System.Windows.Forms.PaintEventHandler(this.dgvContent_Paint);
             this.dgvContent.GotFocus += new System.EventHandler(this.dgvContent_GotFocus);
             // 
@@ -180,13 +182,15 @@ namespace KatawaTranslater
             // cmsCell
             // 
             this.cmsCell.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.rbtnCopy,
+            this.toolStripMenuItem6,
             this.rbtnReset,
             this.rbtnClear,
             this.toolStripMenuItem4,
             this.rbtnTransThis,
             this.rbtnTransFollow});
             this.cmsCell.Name = "cmsCell";
-            this.cmsCell.Size = new System.Drawing.Size(153, 98);
+            this.cmsCell.Size = new System.Drawing.Size(153, 126);
             // 
             // rbtnReset
             // 
@@ -227,7 +231,7 @@ namespace KatawaTranslater
             this.splTrans.Enabled = false;
             this.splTrans.Location = new System.Drawing.Point(0, 25);
             this.splTrans.Name = "splTrans";
-            this.splTrans.Size = new System.Drawing.Size(189, 4);
+            this.splTrans.Size = new System.Drawing.Size(92, 4);
             this.splTrans.TabIndex = 2;
             this.splTrans.TabStop = false;
             // 
@@ -236,19 +240,21 @@ namespace KatawaTranslater
             this.txtOutput.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(250)))), ((int)(((byte)(255)))));
             this.txtOutput.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtOutput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtOutput.ImeMode = System.Windows.Forms.ImeMode.Off;
             this.txtOutput.Location = new System.Drawing.Point(0, 25);
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
-            this.txtOutput.Size = new System.Drawing.Size(189, 601);
+            this.txtOutput.Size = new System.Drawing.Size(92, 71);
             this.txtOutput.TabIndex = 1;
             this.txtOutput.Text = "";
             // 
             // txtInput
             // 
             this.txtInput.Dock = System.Windows.Forms.DockStyle.Top;
+            this.txtInput.ImeMode = System.Windows.Forms.ImeMode.Off;
             this.txtInput.Location = new System.Drawing.Point(0, 4);
             this.txtInput.Name = "txtInput";
-            this.txtInput.Size = new System.Drawing.Size(189, 21);
+            this.txtInput.Size = new System.Drawing.Size(92, 21);
             this.txtInput.TabIndex = 0;
             this.txtInput.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtInput_KeyPress);
             // 
@@ -256,7 +262,7 @@ namespace KatawaTranslater
             // 
             this.MENU.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnFile,
-            this.btnTranslate,
+            this.btnTools,
             this.btnOption,
             this.btnHelp});
             this.MENU.Location = new System.Drawing.Point(0, 0);
@@ -314,15 +320,16 @@ namespace KatawaTranslater
             this.btnExit.Text = "关闭(&X)";
             this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
             // 
-            // btnTranslate
+            // btnTools
             // 
-            this.btnTranslate.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnCopyAll,
             this.btnTransAll,
             this.toolStripMenuItem5,
             this.btnDescribe});
-            this.btnTranslate.Name = "btnTranslate";
-            this.btnTranslate.Size = new System.Drawing.Size(59, 21);
-            this.btnTranslate.Text = "翻译(&T)";
+            this.btnTools.Name = "btnTools";
+            this.btnTools.Size = new System.Drawing.Size(59, 21);
+            this.btnTools.Text = "工具(&T)";
             // 
             // btnTransAll
             // 
@@ -360,28 +367,28 @@ namespace KatawaTranslater
             // btnFont
             // 
             this.btnFont.Name = "btnFont";
-            this.btnFont.Size = new System.Drawing.Size(152, 22);
+            this.btnFont.Size = new System.Drawing.Size(142, 22);
             this.btnFont.Text = "字体(&F)";
             this.btnFont.Click += new System.EventHandler(this.btnFont_Click);
             // 
             // btnSC
             // 
             this.btnSC.Name = "btnSC";
-            this.btnSC.Size = new System.Drawing.Size(152, 22);
+            this.btnSC.Size = new System.Drawing.Size(142, 22);
             this.btnSC.Text = "原文染色(&S)";
             this.btnSC.Click += new System.EventHandler(this.btnSC_Click);
             // 
             // btnTC
             // 
             this.btnTC.Name = "btnTC";
-            this.btnTC.Size = new System.Drawing.Size(152, 22);
+            this.btnTC.Size = new System.Drawing.Size(142, 22);
             this.btnTC.Text = "译文染色(&T)";
             this.btnTC.Click += new System.EventHandler(this.btnTC_Click);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(139, 6);
             // 
             // btnAutoOpen
             // 
@@ -389,7 +396,7 @@ namespace KatawaTranslater
             this.btnAutoOpen.CheckOnClick = true;
             this.btnAutoOpen.CheckState = System.Windows.Forms.CheckState.Checked;
             this.btnAutoOpen.Name = "btnAutoOpen";
-            this.btnAutoOpen.Size = new System.Drawing.Size(152, 22);
+            this.btnAutoOpen.Size = new System.Drawing.Size(142, 22);
             this.btnAutoOpen.Text = "自动打开(&O)";
             this.btnAutoOpen.Click += new System.EventHandler(this.btnAutoOpen_Click);
             // 
@@ -399,7 +406,7 @@ namespace KatawaTranslater
             this.btnAutoSave.CheckOnClick = true;
             this.btnAutoSave.CheckState = System.Windows.Forms.CheckState.Checked;
             this.btnAutoSave.Name = "btnAutoSave";
-            this.btnAutoSave.Size = new System.Drawing.Size(152, 22);
+            this.btnAutoSave.Size = new System.Drawing.Size(142, 22);
             this.btnAutoSave.Text = "自动保存(&A)";
             this.btnAutoSave.Click += new System.EventHandler(this.btnAutoSave_Click);
             // 
@@ -484,6 +491,25 @@ namespace KatawaTranslater
             // 
             this.bwAutoSave.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwAutoSave_DoWork);
             // 
+            // rbtnCopy
+            // 
+            this.rbtnCopy.Name = "rbtnCopy";
+            this.rbtnCopy.Size = new System.Drawing.Size(152, 22);
+            this.rbtnCopy.Text = "复制原文(&S)";
+            this.rbtnCopy.Click += new System.EventHandler(this.rbtnCopy_Click);
+            // 
+            // toolStripMenuItem6
+            // 
+            this.toolStripMenuItem6.Name = "toolStripMenuItem6";
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(149, 6);
+            // 
+            // btnCopyAll
+            // 
+            this.btnCopyAll.Name = "btnCopyAll";
+            this.btnCopyAll.Size = new System.Drawing.Size(187, 22);
+            this.btnCopyAll.Text = "复制所有(&C)";
+            this.btnCopyAll.Click += new System.EventHandler(this.btnCopyAll_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -546,7 +572,7 @@ namespace KatawaTranslater
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem btnReset;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem btnTranslate;
+        private System.Windows.Forms.ToolStripMenuItem btnTools;
         private System.Windows.Forms.ToolStripMenuItem btnTransAll;
         private System.Windows.Forms.ContextMenuStrip cmsCell;
         private System.Windows.Forms.ToolStripMenuItem rbtnReset;
@@ -561,6 +587,9 @@ namespace KatawaTranslater
         private RichTextBox txtOutput;
         private TextBox txtInput;
         private Splitter splTrans;
+        private ToolStripMenuItem rbtnCopy;
+        private ToolStripSeparator toolStripMenuItem6;
+        private ToolStripMenuItem btnCopyAll;
 
 
 
