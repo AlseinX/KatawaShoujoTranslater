@@ -198,7 +198,7 @@ namespace KatawaTranslater
                     while (!sr.EndOfStream)
                     {
                         string s = sr.ReadLine();
-                        if (s.IndexOf('\"') >= 0 && !s.Contains("$ renpy.music.set_volume(0.5, 0.0, channel="))
+                        if (s.IndexOf('\"') >= 0 && !s.Contains("$ renpy.music.set_volume"))
                         {
                             if (s.StartsWith("#"))
                             {
