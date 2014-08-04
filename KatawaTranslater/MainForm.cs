@@ -321,7 +321,7 @@ namespace KatawaTranslater
             s = TranslateTool.Translate(s);
             for (int i = RightClickIndex; i < dgvContent.Rows.Count; i += 2)
             {
-                TableContent[i] = s[(i - 1) / 2];
+                DataUpdate(i, s[(i - 1) / 2]);
             }
             dgvContent.EndEdit();
         }
@@ -522,7 +522,7 @@ namespace KatawaTranslater
         {
             dgvContent.CurrentCell = dgvContent.Rows[RightClickIndex].Cells[0];
             Application.DoEvents();
-            TableContent[RightClickIndex] = Translate(DeFore(TableContent[RightClickIndex - 1]));
+            DataUpdate(RightClickIndex, Translate(DeFore(TableContent[RightClickIndex - 1])));
             dgvContent.EndEdit();
             Changed = true;
         }
@@ -542,7 +542,7 @@ namespace KatawaTranslater
         {
             dgvContent.CurrentCell = dgvContent.Rows[RightClickIndex].Cells[0];
             Application.DoEvents();
-            TableContent[RightClickIndex] = "";
+            DataUpdate(RightClickIndex, "");
             dgvContent.EndEdit();
             Changed = true;
         }
@@ -550,7 +550,7 @@ namespace KatawaTranslater
         {
             dgvContent.CurrentCell = dgvContent.Rows[RightClickIndex].Cells[0];
             Application.DoEvents();
-            TableContent[RightClickIndex] = TranslateTool.Translate(new string[] { Translate(DeFore(TableContent[RightClickIndex - 1])) })[0];
+            DataUpdate(RightClickIndex, TranslateTool.Translate(new string[] { Translate(DeFore(TableContent[RightClickIndex - 1])) })[0]);
             dgvContent.EndEdit();
             Changed = true;
         }
@@ -738,7 +738,5 @@ namespace KatawaTranslater
             }
         }
         #endregion
-
-
     }
 }
